@@ -5,11 +5,10 @@
     <title>Cloud computing - Homework 1</title>
     <style>
         .center {
-          margin: auto;
-          width: 50%;
+            margin: auto;
+            width: 50%;
 
         }
-
 
 
     </style>
@@ -17,94 +16,22 @@
 <body>
 <div class="center">
     <h3>Cloud computing - Homework 1</h3>
-    <p> Geographic coordinates detected by browser: </p>
+    <p> Geographic coordinates found by IP usging <strong> ipwhois API </strong>: </p>
     <p id="lat"></p>
     <p id="long"></p>
     <hr>
-    <p> Random image found for these coordinates using Flickr API: </p>
+    <p> Random image found for these coordinates using <strong> Flickr API</strong>: </p>
 
     <div id="photo"></div>
 
     <hr>
-    <p> Description of the image using the image recognition Imagga API: </p>
+    <p> Description of the image using image recognition from <strong> Imagga API</strong>: </p>
 
     <div id="description"></div>
 
 
 </div>
 
-<script>
-    navigator.geolocation.getCurrentPosition(function(position) {
-
-        // display long and lat to DOM
-        document.getElementById("lat").innerHTML = "Latitude: " + position.coords.latitude;
-        document.getElementById("long").innerHTML = "Longitude: " + position.coords.longitude;
-
-        var xmlhttp;
-
-        // generate random number to get a random picture
-        var randomNumber = Math.floor((Math.random() * 100) + 1);
-
-        var url = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=2f783ac00f1c15a249883048fcb0591c&lat="+ position.coords.latitude
-                                                                                                                                 + "&lon=" + position.coords.longitude + "&format=json"
-                                                                                                                                 + "&per_page=" + randomNumber;
-        xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
-
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200){
-
-                var responsePhotoJson = xmlhttp.responseText.substring(xmlhttp.responseText.indexOf("(") + 1).substring(0, xmlhttp.responseText.length - 1);
-                var responsePhotoJson = responsePhotoJson.substring(0, responsePhotoJson.length - 1);
-
-                var obj = JSON.parse(responsePhotoJson);
-                var photo = obj["photos"]["photo"][randomNumber - 1];
-
-                var photoUrl = "https://farm" +photo["farm"] + ".staticflickr.com/" + photo["server"] +"/"+ photo["id"] +"_"+ photo["secret"] +".jpg";
-                console.log(photoUrl);
-
-                var elem = document.createElement("img");
-                elem.setAttribute("src", photoUrl);
-                elem.setAttribute("height", "500");
-
-                document.getElementById("photo").appendChild(elem);
-
-
-
-                var xmlhttp2;
-
-                var imaggaUrl = "https://api.imagga.com/v2/tags?image_url="+ photoUrl;
-
-                xmlhttp2 = new XMLHttpRequest();
-                xmlhttp2.open("GET", imaggaUrl, true);
-                xmlhttp2.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-
-                xmlhttp2.setRequestHeader("Authorization", "Basic " + btoa("acc_bea3bce3f86774e:17254d3b38f86621f6fba4df0c491621"));
-                xmlhttp2.setRequestHeader('Accept', 'application/json');
-
-                xmlhttp2.send();
-                xmlhttp2.onreadystatechange = function(){
-                    if (xmlhttp2.readyState == 4 && xmlhttp2.status == 200){
-
-                        var imageRecognitionResults = JSON.parse(xmlhttp2.responseText)["result"]["tags"];
-
-                        var text = '';
-                        for (i = 0; i < 10; i++) {
-                          text += imageRecognitionResults[i]["tag"]["en"] + "<br>";
-                        }
-                        console.log(text);
-                        document.getElementById("description").innerHTML = text;
-
-                    }
-                }
-
-            }
-        }
-        xmlhttp.open("GET", url, true);
-        xmlhttp.send();
-
-    });
-
-
-</script>
+<script src="index.js"> </script>
 </body>
 </html>
