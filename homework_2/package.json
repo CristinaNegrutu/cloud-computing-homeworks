@@ -1,0 +1,23 @@
+{
+  "name": "homework_2",
+  "version": "1.0.0",
+  "description": "RESTfull API offerring the management of a database of dogs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CristinaNegrutu/cloud-computing-homeworks.git"
+  },
+  "author": "Cristina Negrutu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CristinaNegrutu/cloud-computing-homeworks/issues"
+  },
+  "homepage": "https://github.com/CristinaNegrutu/cloud-computing-homeworks#readme",
+  "dependencies": {
+    "sqlite3": "^4.0.6"
+  }
+}
