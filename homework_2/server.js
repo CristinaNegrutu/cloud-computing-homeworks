@@ -1,36 +1,56 @@
-var http = require('http');
-var url = require('url');
+let http = require('http');
+let url = require('url');
+let querystring = require('querystring');
 
+let db = require("./database.js");
 
-http.createServer(function (req, res) {
-    let service = require('./service.js');
-    let requestUrl = url.parse(req.url, true);
+let server = http.createServer().listen(8080);
 
-    console.log(requestUrl.pathname);
+server.on('request', (req, res) => {
 
-    // get all dogs
-    if (requestUrl.pathname === '/dog' && req.method === 'GET') {
+	let body = '';
+	req.on('data', (data) => {
+		body += data;
+	});
+	req.on('end', () => {
+		let requestBody = querystring.parse(body);
 
-        service.getListOfDogs(res);
-        // return;
-    }
-    //
-    // // add dog
-    // if (requestUrl.pathname === '/dog' && req.method === 'PUT') {
-    //
-    //     service.addDog(req);
-    //     return;
-    // }
-    //
-    //
-    // service.invalidRequest(req, res);
+		let requestUrl = url.parse(req.url, true).pathname;
+		let requestMethod = req.method
+		let service = require('./service.js');
 
-    // var myRe = new RegExp('\/dog\/[0-9]+');
-    // var myArray = myRe.exec('add/dog/1fsdfsdfasss');
-    // console.log(myArray)
+		console.log(requestUrl);
+		console.log(requestMethod);
 
+		let urlRegex = new RegExp('\/dog\/[0-9]+');
+		let match = urlRegex.exec(requestUrl);
 
-    // res.writeHead(200, {'Content-Type': 'text/plain'});
-    // res.write('Hello World!');
-    // res.end();
-}).listen(8080);
+		if (match !== null) {
+			let matchingUrl;
+			let id;
+			matchingUrl = match[0];
+			id = matchingUrl.substring(matchingUrl.lastIndexOf('/') + 1, matchingUrl.length);
+
+			if (id && requestMethod === "GET") {
+				service.getDog(id, res);
+			}
+
+			if (matchingUrl && requestMethod === "POST") {
+				service.updateDog(id, requestBody, res);
+			}
+
+			if (matchingUrl && requestMethod === "DELETE") {
+				service.removeDog(id, res);
+			}
+		} else if (requestUrl === "/dogs" && requestMethod === "GET") {
+			service.getListOfDogs(res);
+		} else if (requestUrl === "/dog" && requestMethod === "PUT") {
+
+			service.addDog(requestBody, res);
+		} else {
+			service.invalidRequest(res);
+		}
+
+	});
+
+});
