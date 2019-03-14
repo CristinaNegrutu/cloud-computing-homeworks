@@ -7,12 +7,18 @@ var db = require("./database.js");
 exports.getListOfDogs = function (response) {
     var dogs = {};
     var sql = "select * from dog";
-    var params = []
+    var params = [];
     db.all(sql, params, (err, rows) => {
         if (err) {
             console.log(err);
-            return;
+
+            response.writeHead(500, {
+                'Content-Type': 'text/plain'
+            });
+            response.write("Server error!");
+            response.end();
         }
+
         dogs = {
             "message": "success",
             "data": rows
@@ -34,12 +40,25 @@ exports.getListOfDogs = function (response) {
 exports.getDog = function (id, response) {
     var dog = {};
     var sql = "select * from dog where id = ?";
-    var params = [id]
+    var params = [id];
     db.all(sql, params, (err, rows) => {
         if (err) {
             console.log(err);
-            return;
+            response.writeHead(500, {
+                'Content-Type': 'text/plain'
+            });
+            response.write("Server error!");
+            response.end();
         }
+
+        if (rows.length < 1) {
+            response.writeHead(404, {
+                'Content-Type': 'text/plain'
+            });
+            response.write("No dogs found with id " + id);
+            response.end();
+        }
+
         dog = {
             "message": "success",
             "data": rows
@@ -73,7 +92,11 @@ exports.updateDog = function (id, params, response) {
     db.all(sql, params, (err, rows) => {
         if (err) {
             console.log(err);
-            return;
+            response.writeHead(500, {
+                'Content-Type': 'text/plain'
+            });
+            response.write("Server error!");
+            response.end();
         }
 
         dog = {
@@ -81,10 +104,10 @@ exports.updateDog = function (id, params, response) {
             "data": rows
         };
 
-        response.writeHead(200, {
+        response.writeHead(204, {
             'Content-Type': 'application/json'
         });
-        response.write(JSON.stringify(dog));
+        response.write();
         response.end();
     });
 };
@@ -103,23 +126,29 @@ exports.addDog = function (params, response) {
     if (!params.age) {
         errors.push("No age specified");
     }
-    if (errors.length) {
-        res.status(400).json({
-            "error": errors.join(",")
+    if (errors.length > 0) {
+        response.writeHead(500, {
+            'Content-Type': 'text/plain'
         });
-        return;
+        response.write(errors.join(","));
+        response.end();
     }
+
     var data = {
         name: params.name,
         breed: params.breed,
         age: params.age
     };
+
     var sql = 'INSERT INTO dog (name, breed, age) VALUES (?,?,?)';
     var params = [data.name, data.breed, data.age];
     db.run(sql, params, function (err, rows) {
         if (err) {
-            console.log(err);
-            return;
+            response.writeHead(500, {
+                'Content-Type': 'text/plain'
+            });
+            response.write("Server error!");
+            response.end();
         }
         dog = {
             "message": "success",
@@ -145,8 +174,11 @@ exports.removeDog = function (id, response) {
     var params = [id];
     db.all(sql, params, (err, rows) => {
         if (err) {
-            console.log(err);
-            return;
+            response.writeHead(500, {
+                'Content-Type': 'text/plain'
+            });
+            response.write("Server error!");
+            response.end();
         }
 
         response.writeHead(204, {
@@ -158,7 +190,7 @@ exports.removeDog = function (id, response) {
 
 
 exports.invalidRequest = function (response) {
-    response.writeHead(404, {
+    response.writeHead(400, {
         'Content-Type': 'text/plain'
     });
     response.write("Invalid request!");
