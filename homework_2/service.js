@@ -17,6 +17,7 @@ exports.getListOfDogs = function (response) {
             });
             response.write("Server error!");
             response.end();
+            return
         }
 
         dogs = {
@@ -57,6 +58,7 @@ exports.getDog = function (id, response) {
             });
             response.write("No dogs found with id " + id);
             response.end();
+            return;
         }
 
         dog = {
@@ -97,11 +99,11 @@ exports.updateDog = function (id, params, response) {
             });
             response.write("Server error!");
             response.end();
+            return;
         }
 
         dog = {
-            "message": "success",
-            "data": rows
+            "message": "Dog was successfully updated!",
         };
 
         response.writeHead(204, {
@@ -126,12 +128,16 @@ exports.addDog = function (params, response) {
     if (!params.age) {
         errors.push("No age specified");
     }
+    if (!params.name) {
+        errors.push("No name specified");
+    }
     if (errors.length > 0) {
         response.writeHead(500, {
             'Content-Type': 'text/plain'
         });
         response.write(errors.join(","));
         response.end();
+        return;
     }
 
     var data = {
@@ -151,8 +157,7 @@ exports.addDog = function (params, response) {
             response.end();
         }
         dog = {
-            "message": "success",
-            "data": rows
+            "message": "Dog was successfully added!",
         };
 
         response.writeHead(201, {
@@ -179,11 +184,18 @@ exports.removeDog = function (id, response) {
             });
             response.write("Server error!");
             response.end();
+            return;
         }
+        dog = {
+            "message": "Dog was successfully removed!",
+        };
+
 
         response.writeHead(204, {
             'Content-Type': 'application/json'
         });
+        response.write(JSON.stringify(dog));
+
         response.end();
     });
 };
