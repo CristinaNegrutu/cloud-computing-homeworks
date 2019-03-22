@@ -33,7 +33,7 @@ server.on('request', (req, res) => {
                 service.getDog(id, res);
             }
 
-            if (matchingUrl && requestMethod === "POST") {
+            if (matchingUrl && requestMethod === "PUT") {
                 service.updateDog(id, requestBody, res);
             }
 
@@ -42,7 +42,7 @@ server.on('request', (req, res) => {
             }
         } else if (requestUrl === "/dogs" && requestMethod === "GET") {
             service.getListOfDogs(res);
-        } else if (requestUrl === "/dog" && requestMethod === "PUT") {
+        } else if (requestUrl === "/dog" && requestMethod === "POST") {
             service.addDog(requestBody, res);
         } else {
             service.invalidRequest(res);
