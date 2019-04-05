@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> Cloud homework 3 - Build an app in the Google Cloud ecosystem</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='style.css')}}" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="container">
+    <form method="POST" enctype="multipart/form-data">
+
+        <div class="row">
+            <h3>Text detection in photos</h3>
+        </div>
+
+        <div class="row">
+            <h6>Upload a photo in order to detect the text in the photograph using Vision API.</h6> <br> <br>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <div class="form-group" style="height: 50%;">
+                    <label for="upload-button">Upload your photo</label>
+                    <span>
+                        <div id="upload-button" style="background-image:url({{image_url}})">
+
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm btn-block">
+                            <input type="file" name="image" id="image" class="form-control" required/>
+                        </button>
+
+                    </span>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-6 col-sm-12">
+                <h6 class="text-info">Here you will see the result of text recognition using the Vision API</h6>
+                <h6 class="text-info">{{message}}</h6>
+                {% for result in results %}
+                <p> {{ result }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        <br><br>
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <button type="submit" class="btn btn-primary">Submit</button>
+
+            </div>
+        </div>
+
+
+    </form>
+</div>
+</body>
+</html>
