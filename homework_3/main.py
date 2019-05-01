@@ -7,7 +7,7 @@ from badges import storage, model, config
 
 import os
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./cc-homework-3-d001b68ee5bb.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/cristina/Desktop/cloud-3-30821c021f30.json"
 
 app.config.from_object(config)
 
@@ -37,19 +37,19 @@ def hello():
         if image_url:
             data['imageUrl'] = image_url
 
+        results = []
         client = vision.ImageAnnotatorClient()
         image = vision.types.Image()
         image.source.image_uri = image_url
-        resp = client.text_detection(image=image)
 
-        texts = resp.text_annotations
-        results = []
-        for text in texts:
-            results.append('\n"{}"'.format(text.description))
+        response = client.text_detection(image=image)
+        texts = response.text_annotations
+        print('Texts:')
 
-        print(results)
+        print('\n"{}"'.format(texts[0].description))
+        results.append('\n"{}"'.format(texts[0].description))
+
         data['results'] = results
-
         get_model().create(data)
 
         return render_template('index.html',

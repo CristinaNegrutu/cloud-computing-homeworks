@@ -31,6 +31,8 @@ def from_mongo(data):
 def init_app(app):
     global mongo
 
+    app.config["MONGO_URI"] = 'mongodb://cristina:cristina@cluster0-shard-00-00-uiwvz.gcp.mongodb.net:27017,cluster0-shard-00-01-uiwvz.gcp.mongodb.net:27017,cluster0-shard-00-02-uiwvz.gcp.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true'
+
     mongo = PyMongo(app)
     mongo.init_app(app)
 
@@ -39,11 +41,11 @@ def init_app(app):
 def list(limit=10, cursor=None):
     cursor = int(cursor) if cursor else 0
 
-    results = mongo.db.badges.find(skip=cursor, limit=10).sort('email')
-    badges = builtin_list(map(from_mongo, results))
+    results = mongo.db.test.find(skip=cursor, limit=10).sort('email')
+    test = builtin_list(map(from_mongo, results))
 
-    next_page = cursor + limit if len(badges) == limit else None
-    return (badges, next_page)
+    next_page = cursor + limit if len(test) == limit else None
+    return (test, next_page)
 
 
 # [END list]
@@ -51,7 +53,7 @@ def list(limit=10, cursor=None):
 
 # [START read]
 def read(id):
-    result = mongo.db.badges.find_one({'_id': _id(id)})
+    result = mongo.db.test.find_one({'_id': _id(id)})
     return from_mongo(result)
 
 
@@ -60,7 +62,7 @@ def read(id):
 
 # [START create]
 def create(data):
-    result = mongo.db.badges.insert_one(data)
+    result = mongo.db.test.insert_one(data)
     return read(result.inserted_id)
 
 
@@ -69,7 +71,7 @@ def create(data):
 
 # [START update]
 def update(data, id):
-    mongo.db.badges.replace_one({'_id': _id(id)}, data)
+    mongo.db.test.replace_one({'_id': _id(id)}, data)
     return read(id)
 
 
@@ -77,4 +79,4 @@ def update(data, id):
 
 
 def delete(id):
-    mongo.db.badges.delete_one({'_id': _id(id)})
+    mongo.db.test.delete_one({'_id': _id(id)})

@@ -1,3 +1,5 @@
 .idea
 homework_2/node_modules
 homework_2/db.sqlite
+*.pyc
+homework_3/badges/__pycache__/
